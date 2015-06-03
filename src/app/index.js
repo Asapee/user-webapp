@@ -4,14 +4,33 @@ angular.module('userWebapp', ['ngAnimate', 'ngCookies', 'ngTouch', 'ngSanitize',
 	.config(function ($stateProvider, $urlRouterProvider) {
 		$stateProvider
 			.state('home', {
-				url: '/',
-				templateUrl: 'app/main/main.html',
-				controller: 'MainCtrl'
+				url: '/home',
+				templateUrl: 'app/home/home.html',
+				controller: 'HomeCtrl'
+			})
+			.state('login-buttons', {
+				url: '/login',
+				templateUrl: 'app/login/login-buttons.html',
+			})
+			.state('login-form', {
+				url: '/login/form',
+				templateUrl: 'app/login/login-form.html',
+				controller: 'LoginFormCtrl'
+			})
+			.state('register-form', {
+				url: '/register/form',
+				templateUrl: 'app/login/register-form.html',
+				controller: 'RegisterFormCtrl'
 			})
 			.state('admin', {
 				url: '/admin',
 				templateUrl: 'app/admin/admin.html',
 				controller: 'AdminCtrl'
+			})
+			.state('create-resource-request', {
+				url: '/create-resource-request',
+				templateUrl: 'app/waiting/create-resource-request.html',
+				controller: 'CreateResourceRequestCtrl'
 			})
 			.state('waiting', {
 				url: '/waiting',
@@ -24,6 +43,6 @@ angular.module('userWebapp', ['ngAnimate', 'ngCookies', 'ngTouch', 'ngSanitize',
 				controller: 'IssueVoucherCtrl'
 			});
 
-		$urlRouterProvider.otherwise('/');
+		$urlRouterProvider.otherwise('/login');
 	})
 ;

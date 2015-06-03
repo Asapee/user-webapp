@@ -1,0 +1,13 @@
+<div ng-show="!isWaiting">
+	<div ng-show="!currentUser" ng-init="isRegistering = false; isLoggingIn = false">
+		<button class="btn btn-lg btn-block" ng-click="isRegistering = true">Register</button>
+		<button class="btn btn-lg btn-block" ng-click="isLoggingIn = true">Login</button>
+
+		<div class="well" ng-show="errorMessage">{{errorMessage}}</div>
+	</div>
+
+</div>
+<div ng-show="isWaiting">
+	<h3>Request Created</h3>
+	<h5>We estimate it will be your turn in {{timeRemaining}}</h5>
+</div>

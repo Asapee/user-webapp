@@ -1,10 +1,30 @@
 'use strict';
 
 angular.module('userWebapp')
+	.controller('CreateResourceRequestCtrl', function ($scope, $timeout, $location, ResourceUseRequest) {
+		$scope.createResourceUseRequest = function () {
+			var resourceType = "TOILET";
+			var user = Parse.User.current();
+			navigator.geolocation.getCurrentPosition(function (position) {
+				var geopoint = new Parse.GeoPoint(position.coords);
+				user.set("lastKnownLocation", geopoint);
+				user.save();
+				var useRequest = new ResourceUseRequest({
+					resourceType: resourceType,
+					user: user
+				});
+				useRequest.save().then(function () {
+					$timeout(function () {
+						$location.path("/waiting");
+					});
+				});
+			});
+		};
+	})
 	.controller('WaitingCtrl', function ($scope, $timeout, $location) {
 		var user = Parse.User.current();
 		if (!user) {
-			$location.path = "/";
+			return $location.path = "/";
 		}
 		var getWaitTime = function () {
 			Parse.Cloud.run("getWaitTime", {userId: user.id})
@@ -17,10 +37,6 @@ angular.module('userWebapp')
 					var timeInMinutes = Math.floor(timeInMs / 1000 / 60);
 					$timeout(function () {
 						$scope.timeRemaining = timeInMinutes;
-						debugger;
-						$timeout(function () {
-							console.log("hai")
-						}, 5000);
 					});
 				});
 		};

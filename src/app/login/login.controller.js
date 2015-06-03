@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('userWebapp')
-	.controller('MainCtrl', function ($scope, $timeout, $location, ResourceUseRequest) {
+	.controller('LoginCtrl', function ($scope, $timeout, $location, ResourceUseRequest) {
 
 		navigator.geolocation.getCurrentPosition(console.log.bind(console));
 
@@ -15,31 +15,6 @@ angular.module('userWebapp')
 			});
 		}
 
-
-		$scope.register = function () {
-			$scope.isWorking = true;
-			var username = $scope.username;
-			var password = $scope.password;
-			var email = $scope.email;
-			var user = new Parse.User();
-			user.set("username", username);
-			user.set("password", password);
-			user.set("email", email);
-
-			navigator.geolocation.getCurrentPosition(function (position) {
-				var geopoint = new Parse.GeoPoint(position.coords);
-				user.set("lastKnownLocation", geopoint);
-
-				user.signUp(null, {
-					success: function () {
-						$timeout(function () {
-							$scope.currentUser = Parse.User.current();
-						})
-					},
-					error: showErrorMessage
-				})
-			});
-		};
 
 		$scope.login = function () {
 			$scope.isWorking = true;
@@ -60,23 +35,34 @@ angular.module('userWebapp')
 				error: showErrorMessage
 			})
 		};
+	})
+	.controller("LoginFormCtrl", [
+		function ($scope) {
+		}
+	])
+	.controller("RegisterFormCtrl", function ($scope, $timeout, $location) {
+		$scope.register = function () {
+			$scope.isWorking = true;
+			var username = $scope.username;
+			var password = $scope.password;
+			var email = $scope.email;
+			var user = new Parse.User();
+			user.set("username", username);
+			user.set("password", password);
+			user.set("email", email);
 
-		$scope.createResourceUseRequest = function () {
-			var resourceType = "TOILET";
-			var user = Parse.User.current();
 			navigator.geolocation.getCurrentPosition(function (position) {
 				var geopoint = new Parse.GeoPoint(position.coords);
 				user.set("lastKnownLocation", geopoint);
-				user.save();
-				var useRequest = new ResourceUseRequest({
-					resourceType: resourceType,
-					user: user
-				});
-				useRequest.save().then(function () {
-					$timeout(function () {
-						$location.path("/waiting");
-					});
-				});
+
+				user.signUp(null, {
+					success: function () {
+						$timeout(function () {
+							$location.path("/waiting");
+						});
+					},
+					error: console.error.bind(console)
+				})
 			});
 		};
 	})

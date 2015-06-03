@@ -1,19 +1,69 @@
-.browsehappy {
-  margin: 0.2em 0;
-  background: #ccc;
-  color: #000;
-  padding: 0.2em 0;
-}
-
-.thumbnail {
-  height: 200px;
-
-  img.pull-right {
-    width: 50px;
-  }
-}
-
 /* Do not remove this comments bellow. It's the markers used by gulp-inject to inject
    all your sass files automatically */
 // injector
 // endinjector
+
+$header-red: #ac2620;
+$body-text: #333;
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Noto Sans', sans-serif;
+  color: white;
+  background-color: #242424;
+  background-image: url(/assets/images/app-bg.png);
+  background-size: cover;
+}
+
+header {
+  text-align: center;
+  background-color: $header-red;
+  > h1 {
+    margin: 0;
+    padding: 0.6em 0;
+    letter-spacing: -0.05em;
+  }
+}
+
+.btn-green, a.btn-green {
+  color: white;
+  background-color: #78bd77;
+}
+
+.btn-blue, a.btn-blue {
+  color: white;
+  background-color: #5a86c4;
+}
+
+.statement-top-padding {
+  padding-top: 3em !important;
+}
+
+.absolute-aligned-bottom {
+  position: absolute;
+  width: 100%;
+  bottom:0;
+}
+
+.content-padding {
+  padding: 5vw;
+}
+
+.main-menu {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  text-align: center;
+}
+.main-menu-item {
+  display: inline-block;
+  padding: 0;
+  margin: 0;
+  width: 50vw;
+  height: 50vw;
+  line-height: 50vw;
+}
+

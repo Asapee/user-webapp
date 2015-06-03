@@ -1,8 +1,10 @@
-<div ng-if="!code">
-	<h1>Issue Voucher</h1>
-	<button ng-click="issueVoucher()">Get Your Access Code To Go ASAPee</button>
-</div>
+<div class="content-padding" style="text-align:center">
+	<div ng-if="!code">
+		<button class="btn btn-lg btn-block btn-green" ng-click="issueVoucher()">Get Your Access Code</button>
+	</div>
 
-<div ng-if="code">
-	<h1>Your Code is {{code}}</h1>
+	<div ng-if="code">
+		<h1>Your Code is {{code}}</h1>
+	</div>
+
 </div>
