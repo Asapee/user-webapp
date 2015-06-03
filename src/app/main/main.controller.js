@@ -1,7 +1,9 @@
 'use strict';
 
 angular.module('userWebapp')
-	.controller('MainCtrl', function ($scope, $timeout, ResourceUseRequest) {
+	.controller('MainCtrl', function ($scope, $timeout, $location, ResourceUseRequest) {
+
+		navigator.geolocation.getCurrentPosition(console.log.bind(console));
 
 		$scope.isWorking = false;
 		$scope.currentUser = Parse.User.current();
@@ -24,14 +26,19 @@ angular.module('userWebapp')
 			user.set("password", password);
 			user.set("email", email);
 
-			user.signUp(null, {
-				success: function () {
-					$timeout(function () {
-						$scope.currentUser = Parse.User.current();
-					})
-				},
-				error: showErrorMessage
-			})
+			navigator.geolocation.getCurrentPosition(function (position) {
+				var geopoint = new Parse.GeoPoint(position.coords);
+				user.set("lastKnownLocation", geopoint);
+
+				user.signUp(null, {
+					success: function () {
+						$timeout(function () {
+							$scope.currentUser = Parse.User.current();
+						})
+					},
+					error: showErrorMessage
+				})
+			});
 		};
 
 		$scope.login = function () {
@@ -40,8 +47,15 @@ angular.module('userWebapp')
 			var password = $scope.password;
 			Parse.User.logIn(username, password, {
 				success: function () {
-					$scope.isWorking = false;
-					alert("you are now logged in!");
+					navigator.geolocation.getCurrentPosition(function (position) {
+						var geopoint = new Parse.GeoPoint(position.coords);
+						$timeout(function () {
+							var user = Parse.User.current();
+							user.set("lastKnownLocation", geopoint);
+							user.save(); // fire and forget
+							$scope.currentUser = user;
+						});
+					});
 				},
 				error: showErrorMessage
 			})
@@ -49,14 +63,19 @@ angular.module('userWebapp')
 
 		$scope.createResourceUseRequest = function () {
 			var resourceType = "TOILET";
-			var useRequest = new ResourceUseRequest({
-				resourceType: resourceType,
-				user: Parse.User.current()
-			});
-			useRequest.save().then(function () {
-				$timeout(function () {
-					$scope.isWaiting = true;
-					$scope.timeRemaining = "15 minutes";
+			var user = Parse.User.current();
+			navigator.geolocation.getCurrentPosition(function (position) {
+				var geopoint = new Parse.GeoPoint(position.coords);
+				user.set("lastKnownLocation", geopoint);
+				user.save();
+				var useRequest = new ResourceUseRequest({
+					resourceType: resourceType,
+					user: user
+				});
+				useRequest.save().then(function () {
+					$timeout(function () {
+						$location.path("/waiting");
+					});
 				});
 			});
 		};
@@ -66,6 +85,12 @@ angular.module('userWebapp')
 			var ResourceUseRequest = Parse.Object.extend("ResourceUseRequest", {});
 
 			return ResourceUseRequest;
+		}
+	])
+	.service("ResourceUsageVoucher", [
+		function () {
+			var ResourceUsageVoucher = Parse.Object.extend("ResourceUsageVoucher", {});
+			return ResourceUsageVoucher;
 		}
 	])
 ;
