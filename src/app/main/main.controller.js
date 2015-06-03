@@ -1,64 +1,71 @@
 'use strict';
 
 angular.module('userWebapp')
-  .controller('MainCtrl', function ($scope) {
-    $scope.awesomeThings = [
-      {
-        'title': 'AngularJS',
-        'url': 'https://angularjs.org/',
-        'description': 'HTML enhanced for web apps!',
-        'logo': 'angular.png'
-      },
-      {
-        'title': 'BrowserSync',
-        'url': 'http://browsersync.io/',
-        'description': 'Time-saving synchronised browser testing.',
-        'logo': 'browsersync.png'
-      },
-      {
-        'title': 'GulpJS',
-        'url': 'http://gulpjs.com/',
-        'description': 'The streaming build system.',
-        'logo': 'gulp.png'
-      },
-      {
-        'title': 'Jasmine',
-        'url': 'http://jasmine.github.io/',
-        'description': 'Behavior-Driven JavaScript.',
-        'logo': 'jasmine.png'
-      },
-      {
-        'title': 'Karma',
-        'url': 'http://karma-runner.github.io/',
-        'description': 'Spectacular Test Runner for JavaScript.',
-        'logo': 'karma.png'
-      },
-      {
-        'title': 'Protractor',
-        'url': 'https://github.com/angular/protractor',
-        'description': 'End to end test framework for AngularJS applications built on top of WebDriverJS.',
-        'logo': 'protractor.png'
-      },
-      {
-        'title': 'Bootstrap',
-        'url': 'http://getbootstrap.com/',
-        'description': 'Bootstrap is the most popular HTML, CSS, and JS framework for developing responsive, mobile first projects on the web.',
-        'logo': 'bootstrap.png'
-      },
-      {
-        'title': 'Angular UI Bootstrap',
-        'url': 'http://angular-ui.github.io/bootstrap/',
-        'description': 'Bootstrap components written in pure AngularJS by the AngularUI Team.',
-        'logo': 'ui-bootstrap.png'
-      },
-      {
-        'title': 'Sass (Node)',
-        'url': 'https://github.com/sass/node-sass',
-        'description': 'Node.js binding to libsass, the C version of the popular stylesheet preprocessor, Sass.',
-        'logo': 'node-sass.png'
-      }
-    ];
-    angular.forEach($scope.awesomeThings, function(awesomeThing) {
-      awesomeThing.rank = Math.random();
-    });
-  });
+	.controller('MainCtrl', function ($scope, $timeout, ResourceUseRequest) {
+
+		$scope.isWorking = false;
+		$scope.currentUser = Parse.User.current();
+
+		function showErrorMessage (message) {
+			$timeout(function () {
+				$scope.errorMessage = message;
+				$scope.isWorking = false;
+			});
+		}
+
+
+		$scope.register = function () {
+			$scope.isWorking = true;
+			var username = $scope.username;
+			var password = $scope.password;
+			var email = $scope.email;
+			var user = new Parse.User();
+			user.set("username", username);
+			user.set("password", password);
+			user.set("email", email);
+
+			user.signUp(null, {
+				success: function () {
+					$timeout(function () {
+						$scope.currentUser = Parse.User.current();
+					})
+				},
+				error: showErrorMessage
+			})
+		};
+
+		$scope.login = function () {
+			$scope.isWorking = true;
+			var username = $scope.username;
+			var password = $scope.password;
+			Parse.User.logIn(username, password, {
+				success: function () {
+					$scope.isWorking = false;
+					alert("you are now logged in!");
+				},
+				error: showErrorMessage
+			})
+		};
+
+		$scope.createResourceUseRequest = function () {
+			var resourceType = "TOILET";
+			var useRequest = new ResourceUseRequest({
+				resourceType: resourceType,
+				user: Parse.User.current()
+			});
+			useRequest.save().then(function () {
+				$timeout(function () {
+					$scope.isWaiting = true;
+					$scope.timeRemaining = "15 minutes";
+				});
+			});
+		};
+	})
+	.service("ResourceUseRequest", [
+		function () {
+			var ResourceUseRequest = Parse.Object.extend("ResourceUseRequest", {});
+
+			return ResourceUseRequest;
+		}
+	])
+;
