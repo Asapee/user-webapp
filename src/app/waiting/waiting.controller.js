@@ -2,6 +2,7 @@
 
 angular.module('userWebapp')
 	.controller('CreateResourceRequestCtrl', function ($scope, $timeout, $location, ResourceUseRequest) {
+		$scope.queueLength = 15; // TODO: make this dynamic
 		$scope.createResourceUseRequest = function () {
 			var resourceType = "TOILET";
 			var user = Parse.User.current();
@@ -38,6 +39,7 @@ angular.module('userWebapp')
 					$timeout(function () {
 						$scope.timeRemaining = timeInMinutes;
 					});
+					$timeout(getWaitTime, 3000);
 				});
 		};
 		getWaitTime();

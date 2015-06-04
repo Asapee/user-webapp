@@ -1,6 +1,12 @@
 'use strict';
 
 angular.module('userWebapp')
+	.controller("LoginButtonsCtrl", function ($location) {
+		var user = Parse.User.current();
+		if (user) {
+			$location.path("/home");
+		}
+	})
 	.controller("LoginFormCtrl", function ($scope, $location, $timeout) {
 		$scope.login = function () {
 			$scope.isWorking = true;

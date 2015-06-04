@@ -11,6 +11,7 @@ angular.module('userWebapp', ['ngAnimate', 'ngCookies', 'ngTouch', 'ngSanitize',
 			.state('login-buttons', {
 				url: '/login',
 				templateUrl: 'app/login/login-buttons.html',
+				controller: 'LoginButtonsCtrl'
 			})
 			.state('login-form', {
 				url: '/login/form',
