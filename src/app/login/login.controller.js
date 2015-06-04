@@ -1,43 +1,27 @@
 'use strict';
 
 angular.module('userWebapp')
-	.controller('LoginCtrl', function ($scope, $timeout, $location, ResourceUseRequest) {
-
-		navigator.geolocation.getCurrentPosition(console.log.bind(console));
-
-		$scope.isWorking = false;
-		$scope.currentUser = Parse.User.current();
-
-		function showErrorMessage (message) {
-			$timeout(function () {
-				$scope.errorMessage = message;
-				$scope.isWorking = false;
-			});
-		}
-
-
-		$scope.login = function () {
-			$scope.isWorking = true;
-			var username = $scope.username;
-			var password = $scope.password;
-			Parse.User.logIn(username, password, {
-				success: function () {
-					navigator.geolocation.getCurrentPosition(function (position) {
-						var geopoint = new Parse.GeoPoint(position.coords);
-						$timeout(function () {
-							var user = Parse.User.current();
-							user.set("lastKnownLocation", geopoint);
-							user.save(); // fire and forget
-							$scope.currentUser = user;
-						});
-					});
-				},
-				error: showErrorMessage
-			})
-		};
-	})
 	.controller("LoginFormCtrl", [
-		function ($scope) {
+		function ($scope, $location, $timeout) {
+			$scope.login = function () {
+				$scope.isWorking = true;
+				var username = $scope.username;
+				var password = $scope.password;
+				Parse.User.logIn(username, password, {
+					success: function () {
+						navigator.geolocation.getCurrentPosition(function (position) {
+							var geopoint = new Parse.GeoPoint(position.coords);
+							$timeout(function () {
+								var user = Parse.User.current();
+								user.set("lastKnownLocation", geopoint);
+								user.save(); // fire and forget
+								$location.path("/home");
+							});
+						});
+					},
+					error: console.error.bind(console)
+				})
+			};
 		}
 	])
 	.controller("RegisterFormCtrl", function ($scope, $timeout, $location) {
@@ -58,7 +42,7 @@ angular.module('userWebapp')
 				user.signUp(null, {
 					success: function () {
 						$timeout(function () {
-							$location.path("/waiting");
+							$location.path("/home");
 						});
 					},
 					error: console.error.bind(console)
