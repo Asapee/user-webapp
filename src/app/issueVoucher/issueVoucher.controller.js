@@ -12,13 +12,16 @@ angular.module('userWebapp')
 			resourceUseRequestQuery.equalTo("user", Parse.User.current());
 			resourceUseRequestQuery.first(function (resourceUseRequest) {
 				var usageVoucher = new ResourceUsageVoucher({
-					resourceUseRequest: resourceUseRequest,
-					voucherCode: 1234
+					resourceUseRequest: resourceUseRequest
 				});
+				console.log("usageVoucher", usageVoucher);
 				usageVoucher.save().then(function () {
-					$timeout(function () {
-						$scope.code = 1234;
-					});
+					Parse.Cloud.run("unlockDoor", {resourceUseVoucherId: usageVoucher.id, resourceUseRequestId: resourceUseRequest.id})
+						.then(function () {
+							$timeout(function () {
+								$scope.isDoorOpen = true;
+							})
+						});
 				});
 			});
 		}

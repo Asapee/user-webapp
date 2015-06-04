@@ -40,6 +40,10 @@ angular.module('userWebapp')
 						$scope.timeRemaining = timeInMinutes;
 					});
 					$timeout(getWaitTime, 3000);
+				}, function () {
+					$timeout(function () {
+						$location.path("/home");
+					});
 				});
 		};
 		getWaitTime();
